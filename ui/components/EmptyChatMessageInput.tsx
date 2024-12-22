@@ -3,43 +3,59 @@ import { useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import CopilotToggle from './MessageInputActions/Copilot';
 import Focus from './MessageInputActions/Focus';
+import Optimization from './MessageInputActions/Optimization';
+import Attach from './MessageInputActions/Attach';
+import { File } from './ChatWindow';
 
 const EmptyChatMessageInput = ({
   sendMessage,
   focusMode,
   setFocusMode,
+  optimizationMode,
+  setOptimizationMode,
+  fileIds,
+  setFileIds,
+  files,
+  setFiles,
 }: {
   sendMessage: (message: string) => void;
   focusMode: string;
   setFocusMode: (mode: string) => void;
+  optimizationMode: string;
+  setOptimizationMode: (mode: string) => void;
+  fileIds: string[];
+  setFileIds: (fileIds: string[]) => void;
+  files: File[];
+  setFiles: (files: File[]) => void;
 }) => {
   const [copilotEnabled, setCopilotEnabled] = useState(false);
   const [message, setMessage] = useState('');
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === '/') {
-      e.preventDefault();
-      inputRef.current?.focus();
-    }
-  };
-
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeElement = document.activeElement;
+
+      const isInputFocused =
+        activeElement?.tagName === 'INPUT' ||
+        activeElement?.tagName === 'TEXTAREA' ||
+        activeElement?.hasAttribute('contenteditable');
+
+      if (e.key === '/' && !isInputFocused) {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+
     document.addEventListener('keydown', handleKeyDown);
+
+    inputRef.current?.focus();
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
-
-  // Function to get placeholder text based on focusMode
-  const getPlaceholderText = () => {
-    if (focusMode === 'writingAssistant') return 'Ask anything about SOP...';
-    if (focusMode === 'wolframAlphaSearch') return 'Ask anything about Resume...';
-    if (focusMode === 'redditSearch') return 'Ask anything about Colleges...';
-    return 'Ask anything...'; // Default placeholder
-  };
 
   return (
     <form
@@ -64,18 +80,32 @@ const EmptyChatMessageInput = ({
           onChange={(e) => setMessage(e.target.value)}
           minRows={2}
           className="bg-transparent placeholder:text-black/50 dark:placeholder:text-white/50 text-sm text-black dark:text-white resize-none focus:outline-none w-full max-h-24 lg:max-h-36 xl:max-h-48"
-          placeholder={getPlaceholderText()}  // Use dynamic placeholder
+          placeholder={
+            focusMode === "writingAssistant"
+              ? "Ask anything about SOP..."
+              : focusMode === "wolframAlphaSearch"
+              ? "Ask anything about Resume..."
+              : focusMode === "redditSearch"
+              ? "Ask anything about Colleges..."
+              : "Ask anything..."
+          }
         />
         <div className="flex flex-row items-center justify-between mt-4">
-          <div className="flex flex-row items-center space-x-1 -mx-2">
+          <div className="flex flex-row items-center space-x-2 lg:space-x-4">
             {/* <Focus focusMode={focusMode} setFocusMode={setFocusMode} /> */}
-            {/* <Attach /> */}
+            <Attach
+              fileIds={fileIds}
+              setFileIds={setFileIds}
+              files={files}
+              setFiles={setFiles}
+              showText
+            />
           </div>
-          <div className="flex flex-row items-center space-x-4 -mx-2">
-            {/* <CopilotToggle
-              copilotEnabled={copilotEnabled}
-              setCopilotEnabled={setCopilotEnabled}
-            /> */}
+          <div className="flex flex-row items-center space-x-1 sm:space-x-4">
+            <Optimization
+              optimizationMode={optimizationMode}
+              setOptimizationMode={setOptimizationMode}
+            />
             <button
               disabled={message.trim().length === 0}
               className="bg-[#24A0ED] text-white disabled:text-black/50 dark:disabled:text-white/50 disabled:bg-[#e0e0dc] dark:disabled:bg-[#ececec21] hover:bg-opacity-85 transition duration-100 rounded-full p-2"

@@ -2,9 +2,15 @@ import { Clock, Edit, Share, Trash } from 'lucide-react';
 import { Message } from './ChatWindow';
 import { useEffect, useState } from 'react';
 import { formatTimeDifference } from '@/lib/utils';
-import logo from '../public/apple-touch-icon.png';
+import DeleteChat from './DeleteChat';
 
-const Navbar = ({ messages }: { messages: Message[] }) => {
+const Navbar = ({
+  chatId,
+  messages,
+}: {
+  messages: Message[];
+  chatId: string;
+}) => {
   const [title, setTitle] = useState<string>('');
   const [timeAgo, setTimeAgo] = useState<string>('');
 
@@ -40,28 +46,24 @@ const Navbar = ({ messages }: { messages: Message[] }) => {
 
   return (
     <div className="fixed z-40 top-0 left-0 right-0 px-4 lg:pl-[104px] lg:pr-6 lg:px-8 flex flex-row items-center justify-between w-full py-4 text-sm text-black dark:text-white/70 border-b bg-light-primary dark:bg-dark-primary border-light-100 dark:border-dark-200">
-      <Edit
-        size={17}
+      <a
+        href="/"
         className="active:scale-95 transition duration-100 cursor-pointer lg:hidden"
-      />
+      >
+        <Edit size={17} />
+      </a>
       <div className="hidden lg:flex flex-row items-center justify-center space-x-2">
         <Clock size={17} />
         <p className="text-xs">{timeAgo} ago</p>
       </div>
-      <p className="hidden lg:flex flex items-center space-x-2">
-        <img src={logo.src} alt="Company Logo" className="w-12 h-10" />
-        <span>{title}</span>
-      </p>
+      <p className="hidden lg:flex">{title}</p>
 
       <div className="flex flex-row items-center space-x-4">
         <Share
           size={17}
           className="active:scale-95 transition duration-100 cursor-pointer"
         />
-        <Trash
-          size={17}
-          className="text-red-400 active:scale-95 transition duration-100 cursor-pointer"
-        />
+        <DeleteChat redirect chatId={chatId} chats={[]} setChats={() => {}} />
       </div>
     </div>
   );

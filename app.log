@@ -1,0 +1,6 @@
+{"level":"info","message":"WebSocket server started on port 3001","timestamp":"2024-12-21T11:17:54.726Z"}
+{"level":"info","message":"Server is running on port 3001","timestamp":"2024-12-21T11:17:54.728Z"}
+{"level":"info","message":"WebSocket server started on port 3001","timestamp":"2024-12-21T11:18:38.826Z"}
+{"level":"info","message":"Server is running on port 3001","timestamp":"2024-12-21T11:18:38.829Z"}
+{"level":"info","message":"WebSocket server started on port 3001","timestamp":"2024-12-21T11:19:24.211Z"}
+{"level":"error","message":"Uncaught Exception at uncaughtException: Error: listen EADDRINUSE: address already in use :::3001","timestamp":"2024-12-21T11:19:24.214Z"}
